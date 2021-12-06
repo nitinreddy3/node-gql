@@ -14,6 +14,9 @@ const schema = buildSchema(`
     age: Int
     shark: String
   }
+  type Mutation {
+    updateUser(id: Int!, name: String, age: String): Person
+  }
 `);
 
 const users = [
@@ -43,11 +46,22 @@ const getUser = ({ id }) => users.filter(user => user.id === id)[0];
 //Returns a list of users
 const retrieveUsers = ({ shark }) => shark ? users.filter(user => user.shark === shark) : users;
 
+const updateUser = ({ id, name, age }) => {
+  users.map(user => {
+    if (user.id === id) {
+      user.name = name;
+      user.age = age;
+      return user;
+    }
+  });
+  return users.filter(user => user.id === id)[0];
+};
 
 //Construct a resolver function
 const resolver = {
   user: getUser,
-  users: retrieveUsers
+  users: retrieveUsers,
+  updateUser: updateUser
 };
 
 const app = express();
